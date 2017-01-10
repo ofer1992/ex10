@@ -45,10 +45,7 @@ class CompilationEngine:
         Returns a textual XML representation of the program structure.
         :return:
         """
-        # for e in self.root.iter():
-        #     if e.text:
-        #         e.text = " " + e.text + " "
-        return tostring(self.root)
+        return prettify(self.root)[23:]
 
     def compile_expression(self,caller):
         """
@@ -70,7 +67,7 @@ class CompilationEngine:
         """
         #  if expression list is empty
         if self.tokenizer.token_type() is JTok.SYMBOL and self.tokenizer.symbol() == ")":
-            caller.text = " "
+            caller.text = "\n"
             return
 
         self.compile_expression(SubElement(caller,EXPRESSION))
@@ -262,8 +259,9 @@ class CompilationEngine:
         :return:
         """
         STATEMENTS = {'do','while','let','return','if'}
-        caller.text = " "
+        run_once = False
         while self.tokenizer.token_type() is JTok.KEYWORD and self.tokenizer.key_word() in STATEMENTS:
+            run_once = True
             if self.tokenizer.key_word() == 'do':
                 self.compile_do(SubElement(caller, 'doStatement'))
             elif self.tokenizer.key_word() == 'while':
@@ -274,6 +272,8 @@ class CompilationEngine:
                 self.compile_return(SubElement(caller, 'returnStatement'))
             elif self.tokenizer.key_word() == 'if':
                 self.compile_if(SubElement(caller, 'ifStatement'))
+        if not run_once:
+            caller.text = "\n"
 
     def compile_if(self, caller):
         """
@@ -455,7 +455,7 @@ class CompilationEngine:
         :return:
         """
         if self.tokenizer.token_type() is JTok.SYMBOL and self.tokenizer.symbol() == ")":
-            caller.text = " "
+            caller.text = "\n"
             return
 
         self.compile_type(caller)

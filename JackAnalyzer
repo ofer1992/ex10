@@ -1,2 +1,2 @@
 #!/bin/sh
-python3 JackAnalyzer $*
+python3 JackAnalyzer.py $*
